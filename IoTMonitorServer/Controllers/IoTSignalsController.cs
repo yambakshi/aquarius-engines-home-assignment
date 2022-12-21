@@ -34,11 +34,33 @@ namespace IoTMonitorServer.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post(IoTSignal newIoTSignal)
+        public async Task<IActionResult> Post(IoTTransmission ioTTransmission)            
         {
-            await _iotSignalsService.CreateAsync(newIoTSignal);
+            DateTimeOffset now = (DateTimeOffset)DateTime.UtcNow;
+            // long currentTimestamp = now.ToUnixTimeSeconds();
+            long currentTimestamp = now.ToUnixTimeMilliseconds();
 
-            return CreatedAtAction(nameof(Get), new { id = newIoTSignal.Id }, newIoTSignal);
+            IoTSignal sineIoTSignal = new IoTSignal();
+            sineIoTSignal.Timestamp = currentTimestamp;
+            sineIoTSignal.Type = "Sine";
+            sineIoTSignal.Value = ioTTransmission.Sine;
+
+            IoTSignal stateIoTSignal = new IoTSignal();
+            stateIoTSignal.Timestamp = currentTimestamp;
+            stateIoTSignal.Type = "State";
+            stateIoTSignal.Value = ioTTransmission.State;
+
+            IoTSignal[] newSignals = new IoTSignal[] { sineIoTSignal, stateIoTSignal };
+
+            await _iotSignalsService.CreateManyAsync(newSignals);
+
+            return CreatedAtAction(nameof(Get),
+                new
+                {
+                    sineId = sineIoTSignal.Id,
+                    stateId = stateIoTSignal.Id
+                },
+                new { sineIoTSignal, stateIoTSignal });
         }
     }
 }

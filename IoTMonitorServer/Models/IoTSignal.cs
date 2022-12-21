@@ -10,7 +10,7 @@ namespace IoTMonitorServer.Models
         public string? Id { get; set; }
 
         [BsonElement("Timestamp")]
-        public long Timestamp{ get; set; }
+        public long Timestamp { get; set; }
 
         public int Value { get; set; }
 

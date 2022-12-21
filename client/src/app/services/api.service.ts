@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { IoTSignal } from '@models/iot-signal';
 
@@ -9,7 +9,7 @@ import { IoTSignal } from '@models/iot-signal';
     providedIn: 'root'
 })
 export class ApiService {
-    private iotSignalsSubject: Subject<IoTSignal[]>;
+    private iotSignalsSubject: BehaviorSubject<IoTSignal[]>;
     private httpOptions: {} = {
         headers: {},
         responseType: 'json'
@@ -17,7 +17,7 @@ export class ApiService {
 
     constructor(
         private http: HttpClient,) {
-        this.iotSignalsSubject = new Subject<IoTSignal[]>();
+        this.iotSignalsSubject = new BehaviorSubject<IoTSignal[]>([]);
     }
 
     getIoTSignalsObservable(): Observable<IoTSignal[]> {
