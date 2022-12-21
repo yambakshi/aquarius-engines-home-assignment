@@ -2,15 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, Subject, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { User } from '@models/user';
-import { ApiResponse } from '@models/responses';
+import { IoTSignal } from '@models/iot-signal';
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class ApiService {
-    private usersSubject: Subject<User[]>;
+    private iotSignalsSubject: Subject<IoTSignal[]>;
     private httpOptions: {} = {
         headers: {},
         responseType: 'json'
@@ -18,32 +17,22 @@ export class ApiService {
 
     constructor(
         private http: HttpClient,) {
-        this.usersSubject = new Subject<User[]>();
+        this.iotSignalsSubject = new Subject<IoTSignal[]>();
     }
 
-    getUsersObservable(): Observable<User[]> {
-        return this.usersSubject.asObservable();
+    getIoTSignalsObservable(): Observable<IoTSignal[]> {
+        return this.iotSignalsSubject.asObservable();
     }
 
-    setUsers(users: User[]): void {
-        this.usersSubject.next(users);
+    setIoTSignals(iotSignals: IoTSignal[]): void {
+        this.iotSignalsSubject.next(iotSignals);
     }
 
-    getUsers(): any {
-        return this.http.get('/api/users', this.httpOptions)
+    getIoTSignals(): any {
+        return this.http.get('/api/iotsignals', this.httpOptions)
             .pipe(
                 map((res: any) => {
-                    this.setUsers(res);
-                    return res;
-                }),
-                catchError(this.handleError));
-    }
-
-    saveUser(user: User): any {
-        return this.http.put<ApiResponse>('/api/users', user, this.httpOptions)
-            .pipe(
-                map((res: any) => {
-                    this.setUsers([res.user]);
+                    this.setIoTSignals(res);
                     return res;
                 }),
                 catchError(this.handleError));

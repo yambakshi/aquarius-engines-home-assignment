@@ -17,7 +17,7 @@ import { PageNotFoundComponent } from '@components/page-not-found/page-not-found
 import { HomePageComponent } from '@components/home-page/home-page.component';
 import { MainHeaderComponent } from '@components/main-header/main-header.component';
 import { ApiHttpInterceptor } from '@interceptors/api.interceptor';
-import { UsersResolver } from '@resolvers/users.resolver';
+import { SignalsResolver } from '@resolvers/iot-signal.resolver';
 
 import { RouterService } from '@services/router.service';
 import { ApiService } from '@services/api.service';
@@ -49,7 +49,7 @@ import { BrowserStateInterceptor } from '@interceptors/browser-state.interceptor
   providers: [
     ApiService,
     RouterService,
-    UsersResolver,
+    SignalsResolver,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: BrowserStateInterceptor,

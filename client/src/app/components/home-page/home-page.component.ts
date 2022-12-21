@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { User } from '@models/user';
+import { IoTSignal } from '@models/iot-signal';
 import { ApiService } from '@services/api.service';
 
 
@@ -17,8 +17,8 @@ import { ApiService } from '@services/api.service';
     encapsulation: ViewEncapsulation.None,
 })
 export class HomePageComponent {
-    subscriptions: { users: Subscription } = { users: null };
-    users: User[];
+    subscriptions: { iotSignals: Subscription } = { iotSignals: null };
+    iotSignals: IoTSignal[];
 
     constructor(
         private titleService: Title,
@@ -32,8 +32,8 @@ export class HomePageComponent {
             }
         });
 
-        this.subscriptions.users = this.apiService.getUsersObservable().subscribe((users: User[]) => {
-            this.users = users;
+        this.subscriptions.iotSignals = this.apiService.getIoTSignalsObservable().subscribe((iotSignals: IoTSignal[]) => {
+            this.iotSignals = iotSignals;
         });
     }
 

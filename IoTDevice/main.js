@@ -23,7 +23,7 @@ const interval = setInterval(function () {
 
     console.log(`sine = ${sineSignal}; state = ${stateSignal}`);
 
-    // transmitSignal({ 'timestamp': 12341234, 'value': sineSignal, 'type': 'Sine' });
+    transmitSignal({ 'timestamp': 12341234, 'value': sineSignal, 'type': 'Sine' });
 }, 2);
 
 // clearInterval(interval);

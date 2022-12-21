@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from '@components/page-not-found/page-not-found.component';
 import { HomePageComponent } from '@components/home-page/home-page.component';
-import { UsersResolver } from '@resolvers/users.resolver';
+import { SignalsResolver } from '@resolvers/iot-signal.resolver';
 
 const routes: Routes = [{
   path: '',
-  resolve: { resolverResponse: UsersResolver },
+  resolve: { resolverResponse: SignalsResolver },
   component: HomePageComponent
 },
 {
@@ -18,7 +18,7 @@ const routes: Routes = [{
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
     initialNavigation: 'enabled'
-})],
+  })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
