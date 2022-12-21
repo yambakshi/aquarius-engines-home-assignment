@@ -1,0 +1,23 @@
+{
+  "name": "iot-device",
+  "version": "1.0.0",
+  "description": "IoT Device",
+  "main": "src/main.ts",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:yambakshi/aquarius-engines-home-assignment.git"
+  },
+  "dependencies": {
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.5",
+    "ts-node": "^10.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Yam Bakshi",
+  "license": "ISC"
+}
