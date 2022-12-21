@@ -1,0 +1,17 @@
+@import "../scss/global/index.scss";
+
+@include media("screen", "<mobile") {
+    .mat-sidenav-container {
+        > .mat-sidenav {
+            & h1 {
+                margin: 12px 0;
+            }
+        }
+
+        > .mat-sidenav-content {
+            > main {
+                margin-top: 56px;
+            }
+        }
+    }
+}

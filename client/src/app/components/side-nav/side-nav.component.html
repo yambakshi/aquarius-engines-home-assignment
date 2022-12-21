@@ -1,0 +1,15 @@
+<mat-nav-list>
+    <a cdkFocusInitial style="display: none;"></a>
+    <ng-container>
+        <a *ngFor="let item of loggedOutMenuItems" [routerLink]="item.link" mat-list-item (click)="onSidenavClose()"
+            [ngClass]="isSelected(item.link) ? 'selected' : ''">
+            <mat-icon>{{item.icon}}</mat-icon><span class="nav-caption">{{item.label}}</span>
+        </a>
+    </ng-container>
+    <ng-template #loggedInNav>
+        <a *ngFor="let item of loggedInMenuItems" [routerLink]="item.link" mat-list-item (click)="onSidenavClose()"
+            [ngClass]="isSelected(item.link) ? 'selected' : ''">
+            <mat-icon>{{item.icon}}</mat-icon><span class="nav-caption">{{item.label}}</span>
+        </a>
+    </ng-template>
+</mat-nav-list>

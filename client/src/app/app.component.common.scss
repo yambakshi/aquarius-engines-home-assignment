@@ -1,0 +1,33 @@
+.mat-sidenav-container {
+    height: 100%;
+
+    > .mat-sidenav {
+        max-width: 300px;
+        background-color: #7845d1;
+
+        & h1 {
+            text-align: center;
+            margin-top: 16px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 0 16px;
+        }
+    }
+
+    > .mat-sidenav-content {
+        display: flex;
+
+        > main-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 2;
+        }
+
+        > main {
+            width: 100%;
+            margin-top: 64px;
+        }
+    }
+}

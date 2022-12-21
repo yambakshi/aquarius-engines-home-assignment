@@ -1,0 +1,24 @@
+@import "../../../scss/global/index.scss";
+
+@include media("screen", "<mobile") {
+    .page-not-found-container {
+        > h1 {
+            $font-size: 50px;
+            font-size: $font-size;
+            line-height: calc(#{$font-size} * 1.15);
+        }
+
+        > a {
+            > button {
+                padding: 10px;
+                font-size: 30px;
+
+                & mat-icon {
+                    font-size: 30px;
+                    width: 30px;
+                    height: 30px;
+                }
+            }
+        }
+    }
+}

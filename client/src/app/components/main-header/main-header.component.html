@@ -1,0 +1,7 @@
+<mat-toolbar color="primary">
+    <button mat-icon-button (click)="onToggleSidenav()">
+        <mat-icon>menu</mat-icon>
+    </button>
+</mat-toolbar>
+<mat-progress-bar *ngIf="routerService.loading" color="accent" mode="indeterminate">
+</mat-progress-bar>

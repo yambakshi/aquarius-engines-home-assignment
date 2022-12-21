@@ -1,0 +1,37 @@
+.page-not-found-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 15px;
+
+    > h1 {
+        $font-size: 100px;
+        font-size: $font-size;
+        line-height: calc(#{$font-size} * 1.15);
+        text-align: center;
+    }
+
+    > a {
+        color: #fff;
+        text-decoration: none;
+
+        > button {
+            font-size: 50px;
+            padding: 20px;
+
+            > span {
+                display: flex;
+                align-items: center;
+
+                > mat-icon {
+                    font-size: 50px;
+                    height: 50px;
+                    width: 50px;
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+}

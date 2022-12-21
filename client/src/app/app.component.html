@@ -1,0 +1,12 @@
+<mat-sidenav-container>
+    <mat-sidenav #sidenav role="navigation">
+        <h1>Hello Guest</h1>
+        <side-nav (sidenavClose)="sidenav.close()"></side-nav>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <main-header (sidenavToggle)="sidenav.toggle()"></main-header>
+        <main>
+            <router-outlet></router-outlet>
+        </main>
+    </mat-sidenav-content>
+</mat-sidenav-container>
