@@ -1,0 +1,11 @@
+@import "../../../scss/global/index.scss";
+
+@include media("screen", "<mobile") {
+    .home-page-container {
+        > h1 {
+            $font-size: 50px;
+            font-size: $font-size;
+            line-height: calc(#{$font-size} * 1.15);
+        }
+    }
+}

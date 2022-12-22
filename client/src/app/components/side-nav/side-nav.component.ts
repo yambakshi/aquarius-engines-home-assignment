@@ -16,6 +16,10 @@ export class SideNavComponent {
         link: '/',
         icon: 'home',
         label: 'Home'
+    }, {
+        link: '/alarms',
+        icon: 'warning',
+        label: 'Alarms'
     }];
     loggedInMenuItems = []
 

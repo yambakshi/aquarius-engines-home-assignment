@@ -21,8 +21,6 @@ import * as moment from 'moment';
     encapsulation: ViewEncapsulation.None,
 })
 export class HomePageComponent {
-
-
     subscriptions: { iotSignals: Subscription } = { iotSignals: null };
     iotSignals: { value: number, date: any }[];
 

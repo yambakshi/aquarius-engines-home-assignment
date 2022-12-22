@@ -25,7 +25,7 @@ export class BaseSignal {
         // Generate an anomaly
         this.anomaly.interval = this.generateAnomalyInterval();
         this.anomaly.timestamp = currTimestamp;
-        this.value = this.getRandomNumberInRange([this.bounds[1], this.bounds[1] * 1.1]);
+        this.value = this.getRandomNumberInRange([this.bounds[1], this.bounds[1] * 1.2]);
     }
 
     protected calcSignal(): number {

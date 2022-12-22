@@ -16,21 +16,25 @@ import { SideNavComponent } from '@components/side-nav/side-nav.component';
 import { PageNotFoundComponent } from '@components/page-not-found/page-not-found.component';
 import { HomePageComponent } from '@components/home-page/home-page.component';
 import { MainHeaderComponent } from '@components/main-header/main-header.component';
-import { ApiHttpInterceptor } from '@interceptors/api.interceptor';
-import { SignalsResolver } from '@resolvers/iot-signal.resolver';
+import { AlarmsPageComponent } from '@components/alarms-page/alarms-page.component';
 
 import { RouterService } from '@services/router.service';
 import { ApiService } from '@services/api.service';
+import { ApiHttpInterceptor } from '@interceptors/api.interceptor';
+import { SignalsResolver } from '@resolvers/iot-signal.resolver';
+
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserStateInterceptor } from '@interceptors/browser-state.interceptor';
+import { SignalRService } from '@services/signalr.service';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomePageComponent,
-    SideNavComponent,
     MainHeaderComponent,
+    HomePageComponent,
+    AlarmsPageComponent,
+    SideNavComponent,
     PageNotFoundComponent
   ],
   imports: [
@@ -49,6 +53,7 @@ import { BrowserStateInterceptor } from '@interceptors/browser-state.interceptor
   providers: [
     ApiService,
     RouterService,
+    SignalRService,
     SignalsResolver,
     {
       provide: HTTP_INTERCEPTORS,

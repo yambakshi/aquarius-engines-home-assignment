@@ -9,11 +9,11 @@ namespace IoTMonitorServer.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
 
-        [BsonElement("Timestamp")]
-        public long Timestamp { get; set; }
+        [BsonElement("timestamp")]
+        public long timestamp { get; set; }
 
-        public int Value { get; set; }
+        public int value { get; set; }
 
-        public string Type { get; set; } = null!;
+        public string type { get; set; } = null!;
     }
 }
