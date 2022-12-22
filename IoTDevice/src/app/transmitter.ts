@@ -19,7 +19,7 @@ export class Transmitter {
         this.sineSignal.generateSignal(currTimestamp);
         this.stateSignal.generateSignal(currTimestamp);
 
-        logger.info({ message: `Transmitting: sine = ${this.sineSignal.value}; state = ${this.stateSignal.value}`, label: 'main' });
+        logger.info({ message: `Transmitting: sine = ${this.sineSignal.value}; state = ${this.stateSignal.value}`, label: 'transmitSignals' });
 
         sendTransmission({
             [SignalType.Sine]: this.sineSignal.value,
