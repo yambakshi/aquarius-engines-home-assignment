@@ -21,17 +21,11 @@ namespace IoTMonitorServer.Services
                 ioTMonitorDatabaseSettings.Value.IoTSignalsCollectionName);
         }
 
-        public async Task<List<IoTSignal>> GetAsync() =>
-            await _signalsCollection.Find(_ => true).ToListAsync();
-
-        public async Task<List<IoTSignal>> GetAlarmsAsync() =>
-            await _signalsCollection.Find(x => x.flag != null).ToListAsync();
-
-        public async Task<List<IoTSignal>> GetAsync(int n) =>
-            await _signalsCollection.Find(_ => true).Limit(n).ToListAsync();
-
-        public async Task<IoTSignal?> GetAsync(string id) =>
-            await _signalsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+        public async Task<List<IoTSignal>> GetAsync(string? flag, int? limit)
+        {
+            var results = await _signalsCollection.Find(x => x.flag == flag).Limit(limit).ToListAsync();
+            return results;
+        }
 
         public async Task CreateAsync(IoTSignal newSignal) =>
             await _signalsCollection.InsertOneAsync(newSignal);

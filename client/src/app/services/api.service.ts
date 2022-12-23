@@ -44,8 +44,16 @@ export class ApiService {
         this.iotSignalsSubject.next(iotSignals);
     }
 
-    getIoTSignals(): any {
-        return this.http.get('/api/iotsignals', this.httpOptions)
+    getIoTSignals(filter: { flag?: string, limit?: number }): any {
+        let path = '/api/iotsignals';
+        if (Object.keys(filter).length > 0) {
+            const encodedParams = Object.entries(filter).reduce((acc, [key, val]) =>
+                ({ ...acc, [key]: encodeURIComponent(val) }), {});
+            const queryParams = new URLSearchParams(encodedParams);
+            path += `?${queryParams.toString()}`;
+        }
+
+        return this.http.get(path, this.httpOptions)
             .pipe(
                 map((res: any) => {
                     this.setIoTSignals(res);

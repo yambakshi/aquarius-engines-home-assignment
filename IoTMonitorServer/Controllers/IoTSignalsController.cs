@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using IoTMonitorServer.Services;
 using IoTMonitorServer.Models;
+using Microsoft.AspNetCore.Http;
+using System.Web;
 
 namespace IoTMonitorServer.Controllers
 {
@@ -18,21 +20,11 @@ namespace IoTMonitorServer.Controllers
         public IoTSignalsController(IoTSignalsService iotSignalsService) =>
             _iotSignalsService = iotSignalsService;
 
-        [HttpGet]
-        public async Task<List<IoTSignal>> Get() =>
-            await _iotSignalsService.GetAlarmsAsync();
-
-        [HttpGet("{id:length(24)}")]
-        public async Task<ActionResult<IoTSignal>> Get(string id)
+        [HttpGet] // GET /api/iotsignals
+        public async Task<List<IoTSignal>> Get([FromQuery(Name = "flag")] string? flag, [FromQuery(Name = "limit")] int? limit)
         {
-            var iotSignal = await _iotSignalsService.GetAsync(id);
-
-            if (iotSignal is null)
-            {
-                return NotFound();
-            }
-
-            return iotSignal;
+            var iotSignals = await _iotSignalsService.GetAsync(flag, limit);
+            return iotSignals;
         }
 
         [HttpPost]
@@ -57,7 +49,7 @@ namespace IoTMonitorServer.Controllers
 
             if (sineIoTSignal.value < this.bounds["Sine"][0] || sineIoTSignal.value > this.bounds["Sine"][1])
             {
-                sineIoTSignal.flag = "Out of Bounds";
+                sineIoTSignal.flag = "out_of_bounds";
             }
 
             IoTSignal stateIoTSignal = new IoTSignal();
@@ -67,7 +59,7 @@ namespace IoTMonitorServer.Controllers
 
             if (stateIoTSignal.value < this.bounds["State"][0] || stateIoTSignal.value > this.bounds["State"][1])
             {
-                stateIoTSignal.flag = "Out of Bounds";
+                stateIoTSignal.flag = "out_of_bounds";
             }
 
             IoTSignal[] newSignals = new IoTSignal[] { sineIoTSignal, stateIoTSignal };
