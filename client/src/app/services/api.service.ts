@@ -1,8 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { IoTSignal } from '@models/iot-signal';
+import { SignalRService } from './signalr.service';
+import { isPlatformBrowser } from '@angular/common';
 
 
 @Injectable({
@@ -16,8 +18,22 @@ export class ApiService {
     }
 
     constructor(
-        private http: HttpClient,) {
+        @Inject(PLATFORM_ID) private platformId: any,
+        private signalRService: SignalRService,
+        private http: HttpClient) {
         this.iotSignalsSubject = new BehaviorSubject<IoTSignal[]>([]);
+
+        if (isPlatformBrowser(this.platformId)) {
+            this.establishSignalRConnection();
+        }
+    }
+
+    private establishSignalRConnection(): void {
+        this.signalRService.connect();
+        this.signalRService.listen().subscribe((data: any) => {
+            if (!Array.isArray(data)) return;
+            this.setIoTSignals(data);
+        });
     }
 
     getIoTSignalsObservable(): Observable<IoTSignal[]> {

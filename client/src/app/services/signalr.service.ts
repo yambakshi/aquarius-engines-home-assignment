@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -8,26 +9,22 @@ export class SignalRService {
     private readonly path: string = 'http://localhost:7095/iotSignalsHub';
     private connection: HubConnection;
 
-    constructor() {
+    constructor() { }
+
+    connect() {
         this.connection = new HubConnectionBuilder()
             .withUrl(this.path)
             .build();
 
-        this.connect();
-        this.listen();
-    }
-
-    connect() {
         this.connection.start()
-            .then(() => {
-                const asdf = this.connection.invoke("SendMessage", "Hello")
-                return asdf;
-            });
+            .then(() => this.connection.invoke("SendMessage", "Establish Connection"));
     }
 
     listen() {
-        this.connection.on("ReceiveMessage", data => {
-            // console.log(data);
-        });
+        return new Observable((subscriber) => {
+            this.connection.on("ReceiveMessage", data => {
+                subscriber.next(data);
+            });
+        })
     }
 }

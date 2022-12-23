@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import { IoTSignal } from '@models/iot-signal';
 import { ApiService } from '@services/api.service';
 import { isPlatformBrowser } from '@angular/common';
-import { SignalRService } from '@services/signalr.service';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -35,7 +34,6 @@ export class AlarmsPageComponent {
         @Inject(PLATFORM_ID) private platformId: any,
         private titleService: Title,
         private apiService: ApiService,
-        private signalRService: SignalRService,
         private route: ActivatedRoute) {
         this.titleService.setTitle('Alarms');
         this.dataSource = new MatTableDataSource([]);
@@ -57,6 +55,10 @@ export class AlarmsPageComponent {
 
             this.dataSource.data = this.iotSignalsRows;
         });
+    }
+
+    get isNoIoTSignals(): boolean {
+        return this.iotSignalsRows.length === 0;
     }
 
     ngOnInit(): void {

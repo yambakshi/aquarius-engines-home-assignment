@@ -8,6 +8,7 @@
 - [Run and manage periodic background tasks in ASP.NET Core 6 with C#](https://medium.com/medialesson/run-and-manage-periodic-background-tasks-in-asp-net-core-6-with-c-578a31f4b7a3)
 
 ## SignalR
+- [@microsoft/signalr](https://www.npmjs.com/package/@microsoft/signalr)
 - [Send messages from outside a hub](https://learn.microsoft.com/en-us/aspnet/core/signalr/hubcontext?view=aspnetcore-6.0)
 
 ## D3

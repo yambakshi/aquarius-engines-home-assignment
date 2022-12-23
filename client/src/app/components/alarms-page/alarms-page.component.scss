@@ -6,6 +6,31 @@
     min-height: 100%;
     align-items: center;
 
+    &.no-iot-signals {
+        justify-content: center;
+
+        > .no-iot-signals-container {
+            display: flex;
+        }
+
+        > .iot-signals-table-container {
+            display: none;
+        }
+    }
+
+    > .no-iot-signals-container {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+
+        > h1 {
+            $font-size: 100px;
+            font-size: $font-size;
+            line-height: calc(#{$font-size} * 1.15);
+            text-align: center;
+        }
+    }
+
     > .iot-signals-table-container {
         padding: 20px 0;
         width: 90%;

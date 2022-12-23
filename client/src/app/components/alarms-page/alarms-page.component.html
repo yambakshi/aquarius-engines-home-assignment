@@ -1,4 +1,7 @@
-<div class="alarms-page-container">
+<div class="alarms-page-container" [ngClass]="isNoIoTSignals ? 'no-iot-signals' : ''">
+    <div class="no-iot-signals-container">
+        <h1>No IoT Signals</h1>
+    </div>
     <div class="iot-signals-table-container">
         <h1>IoT Signals</h1>
         <div class="table-inner-container">
@@ -14,7 +17,8 @@
                 <!-- Timestamp Column -->
                 <ng-container matColumnDef="timestamp">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Timestamp</th>
-                    <td mat-cell *matCellDef="let iotSignal">{{iotSignal.timestamp | date:'dd/MM/yyyy HH:mm:ss.SSS':'GMT'}}</td>
+                    <td mat-cell *matCellDef="let iotSignal">{{iotSignal.timestamp | date:'dd/MM/yyyy
+                        HH:mm:ss.SSS':'GMT'}}</td>
                 </ng-container>
 
                 <!-- Value Column -->
