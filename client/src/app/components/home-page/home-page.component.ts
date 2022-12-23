@@ -16,7 +16,17 @@ import * as d3 from 'd3';
 })
 export class HomePageComponent {
     subscriptions: { iotSignals: Subscription } = { iotSignals: null };
-    iotSignals: { value: number, date: any }[];
+    afterViewCheckedEnabled: boolean = true;
+    graphConfig: any;
+    iotSignals: {
+        [key in IoTSignalType]: {
+            data: { value: number, date: any }[],
+            svg: any
+        }
+    } = {
+            [IoTSignalType.Sine]: { data: null, svg: null },
+            [IoTSignalType.State]: { data: null, svg: null }
+        };
 
     constructor(
         @Inject(PLATFORM_ID) private platformId: any,
@@ -24,7 +34,6 @@ export class HomePageComponent {
         private apiService: ApiService,
         private route: ActivatedRoute) {
         this.titleService.setTitle('Home');
-
         this.route.data.subscribe(data => {
             if (!data['resolverResponse']) {
                 return;
@@ -34,78 +43,83 @@ export class HomePageComponent {
         this.subscriptions.iotSignals = this.apiService.getIoTSignalsObservable().subscribe((iotSignals: IoTSignal[]) => {
             this.iotSignals = iotSignals.reduce((acc, signal: IoTSignal) => {
                 const { timestamp, type, value } = signal;
-                if (type === IoTSignalType.State) {
-                    acc.push({ value, date: timestamp })
-                }
-
+                acc[type].data.push({ value, date: timestamp });
                 return acc;
-            }, [])
+            }, {
+                [IoTSignalType.Sine]: {
+                    data: [],
+                    svg: this.iotSignals[IoTSignalType.Sine].svg
+                },
+                [IoTSignalType.State]: {
+                    data: [],
+                    svg: this.iotSignals[IoTSignalType.State].svg
+                }
+            });
+
+            this.afterViewCheckedEnabled = true;
         });
+
+        const margin = { top: 10, right: 10, bottom: 35, left: 20 };
+        const width = 750 - margin.left - margin.right;
+        const height = 400 - margin.top - margin.bottom;
+        this.graphConfig = {
+            margin, width, height,
+            curve: d3.curveLinear, // how to interpolate between points
+            stroke: {
+                color: "currentColor", // stroke color of line
+                linecap: "round", // stroke line cap of the line
+                linejoin: "round", // stroke line join of the line
+                width: 1.5, // stroke width of line, in pixels
+                opacity: 1, // stroke opacity of line
+            },
+            type: {
+                x: d3.scaleTime, // the x-scale type
+                y: d3.scaleLinear, // the y-scale type
+            },
+            range: {
+                x: [margin.left, width - margin.right], // [left, right]
+                y: [height - margin.bottom, margin.top] // [bottom, top]
+            }
+        }
     }
 
     ngAfterViewInit(): void {
         if (!isPlatformBrowser(this.platformId)) return;
-        this.createSvg();
+        Object.values(IoTSignalType).forEach(type => this.createSvg(type));
     }
 
-    private createSvg(): void {
-        // set the dimensions and margins of the graph
-        const margin = { top: 10, right: 0, bottom: 35, left: 20 },
-            width = 1200 - margin.left - margin.right,
-            height = 400 - margin.top - margin.bottom;
+    ngAfterViewChecked(): void {
+        if (!isPlatformBrowser(this.platformId) || !this.afterViewCheckedEnabled) return;
+        Object.values(IoTSignalType).forEach(type => this.refreshSvg(type));
+    }
 
-        const yFormat = "+~%"; // a format specifier string for the y-axis
-        const curve = d3.curveLinear; // how to interpolate between points
+    private refreshSvg(iotSignalType: IoTSignalType): void {
+        d3.selectAll(`figure#${iotSignalType} > svg > g > *`).remove();
 
-        const color = "currentColor"; // stroke color of line
-        const strokeLinecap = "round"; // stroke line cap of the line
-        const strokeLinejoin = "round"; // stroke line join of the line
-        const strokeWidth = 1.5; // stroke width of line, in pixels
-        const strokeOpacity = 1; // stroke opacity of line
-
-        const xType = d3.scaleUtc; // the x-scale type
-        const yType = d3.scaleLinear; // the y-scale type
-
-        const yRange = [height - margin.bottom, margin.top]; // [bottom, top]
-        const xRange = [margin.left, width - margin.right] // [left, right]
-
-        const X = d3.map(this.iotSignals, x => x.date);
-        const Y = d3.map(this.iotSignals, y => y.value);
+        const { type, range, height, width, margin, curve, stroke } = this.graphConfig;
+        const X = d3.map(this.iotSignals[iotSignalType].data, x => x.date);
+        const Y = d3.map(this.iotSignals[iotSignalType].data, y => y.value);
         const I: any = d3.range(X.length);
 
         // Compute default domains.
         const xDomain = d3.extent(X);
-        const yDomain = [0, d3.max(Y)];
+        const yDomain = [0, Y.length > 0 ? d3.max(Y) : 5000];
 
         // Construct scales and axes.
-        const xScale = xType(xDomain, xRange);
-        const yScale = yType(yDomain, yRange);
+        const xScale = type.x(xDomain, range.x);
+        const yScale = type.y(yDomain, range.y);
         const xAxis = d3.axisBottom(xScale).ticks(d3.timeMillisecond.every(5), '%H:%M:%S.%L').tickSizeOuter(0);
         const yAxis = d3.axisLeft(yScale).ticks(height / 40);
 
         // Construct a line generator.
         const line = d3.line()
             .curve(curve)
-            .x((i: any) => {
-                const asdf = xScale(X[i]);
-                return asdf;
-            })
-            .y((i: any) => {
-                const asdf = yScale(Y[i]);
-                return asdf;
-            });
-
-        // append the svg object to the body of the page
-        const svg = d3.select("figure#graph")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+            .x((i: any) => xScale(X[i]))
+            .y((i: any) => yScale(Y[i]));
 
         // Add X axis --> it is a date format
-        svg.append("g")
-            .attr("transform", `translate(0,${yScale(1)})`)
+        this.iotSignals[iotSignalType].svg.append("g")
+            .attr("transform", `translate(0,${yScale(0)})`)
             .call(xAxis)
             .selectAll("text")
             .style("text-anchor", "end")
@@ -114,7 +128,7 @@ export class HomePageComponent {
             .attr("transform", "rotate(-65)");
 
         // Add Y axis
-        svg.append("g")
+        this.iotSignals[iotSignalType].svg.append("g")
             .attr("transform", `translate(${margin.left},0)`)
             .call(yAxis)
             .call(g => g.select(".domain").remove())
@@ -128,13 +142,80 @@ export class HomePageComponent {
                 .attr("text-anchor", "start")
                 .text(''));
 
-        svg.append("path")
+        // Add line
+        this.iotSignals[iotSignalType].svg.append("path")
             .attr("fill", "none")
-            .attr("stroke", color)
-            .attr("stroke-width", strokeWidth)
-            .attr("stroke-linecap", strokeLinecap)
-            .attr("stroke-linejoin", strokeLinejoin)
-            .attr("stroke-opacity", strokeOpacity)
+            .attr("stroke", stroke.color)
+            .attr("stroke-width", stroke.width)
+            .attr("stroke-linecap", stroke.linecap)
+            .attr("stroke-linejoin", stroke.linejoin)
+            .attr("stroke-opacity", stroke.opacity)
+            .attr("d", line(I));
+    }
+
+    private createSvg(iotSignalType: IoTSignalType): void {
+        const { type, range, height, width, margin, curve, stroke } = this.graphConfig;
+        const X = d3.map(this.iotSignals[iotSignalType].data, x => x.date);
+        const Y = d3.map(this.iotSignals[iotSignalType].data, y => y.value);
+        const I: any = d3.range(X.length);
+
+        // Compute default domains.
+        const xDomain = d3.extent(X);
+        const yDomain = [0, Y.length > 0 ? d3.max(Y) : 5000];
+
+        // Construct scales and axes.
+        const xScale = type.x(xDomain, range.x);
+        const yScale = type.y(yDomain, range.y);
+        const xAxis = d3.axisBottom(xScale).ticks(d3.timeMillisecond.every(5), '%H:%M:%S.%L').tickSizeOuter(0);
+        const yAxis = d3.axisLeft(yScale).ticks(height / 40);
+
+        // Construct a line generator.
+        const line = d3.line()
+            .curve(curve)
+            .x((i: any) => xScale(X[i]))
+            .y((i: any) => yScale(Y[i]));
+
+        // append the svg object to the body of the page
+        this.iotSignals[iotSignalType].svg = d3.select(`figure#${iotSignalType}`)
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Add X axis --> it is a date format
+        this.iotSignals[iotSignalType].svg.append("g")
+            .attr("transform", `translate(0,${yScale(1)})`)
+            .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-65)");
+
+        // Add Y axis
+        this.iotSignals[iotSignalType].svg.append("g")
+            .attr("transform", `translate(${margin.left},0)`)
+            .call(yAxis)
+            .call(g => g.select(".domain").remove())
+            .call(g => g.selectAll(".tick line").clone()
+                .attr("x2", width - margin.left - margin.right)
+                .attr("stroke-opacity", 0.1))
+            .call(g => g.append("text")
+                .attr("x", -margin.left)
+                .attr("y", 10)
+                .attr("fill", "currentColor")
+                .attr("text-anchor", "start")
+                .text(''));
+
+        // Add line
+        this.iotSignals[iotSignalType].svg.append("path")
+            .attr("fill", "none")
+            .attr("stroke", stroke.color)
+            .attr("stroke-width", stroke.width)
+            .attr("stroke-linecap", stroke.linecap)
+            .attr("stroke-linejoin", stroke.linejoin)
+            .attr("stroke-opacity", stroke.opacity)
             .attr("d", line(I));
     }
 

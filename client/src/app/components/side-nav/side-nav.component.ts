@@ -14,8 +14,8 @@ export class SideNavComponent {
     @Output() sidenavClose = new EventEmitter();
     loggedOutMenuItems = [{
         link: '/',
-        icon: 'home',
-        label: 'Home'
+        icon: 'show_chart',
+        label: 'Graphs'
     }, {
         link: '/alarms',
         icon: 'warning',

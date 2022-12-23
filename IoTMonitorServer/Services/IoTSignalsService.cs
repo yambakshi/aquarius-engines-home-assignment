@@ -23,7 +23,10 @@ namespace IoTMonitorServer.Services
 
         public async Task<List<IoTSignal>> GetAsync(string? flag, int? limit)
         {
-            var results = await _signalsCollection.Find(x => x.flag == flag).Limit(limit).ToListAsync();
+            var results = await _signalsCollection
+                .Find(x => x.flag == flag)
+                .Sort("{timestamp: -1}")
+                .Limit(limit).ToListAsync();
             return results;
         }
 

@@ -23,3 +23,12 @@ V Document .NET ASP.NET Links
 Compare pubsub to websockets to client polling
 create alarms table
 flag out of bounds signals in the db
+
+- add logging to server
+- [add tooltip to graphs](https://observablehq.com/@d3/line-with-tooltip)
+- add zoom to graphs
+- fetch all data on each refresh (currently only the in bounds data is fetched because of the flag)
+- maybe add state mgmt in angular
+- show anomalies as red dots in the graph
+- add setup and running readme
+- implement sine wave functionality
