@@ -22,7 +22,7 @@ namespace IoTMonitorServer.Controllers
 
         [HttpGet]
         public async Task<List<IoTSignal>> Get() =>
-            await _iotSignalsService.GetAsync();
+            await _iotSignalsService.GetAsync(100);
 
 
         [HttpGet("{id:length(24)}")]

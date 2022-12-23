@@ -5,12 +5,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+// MaterialUI
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 import { SideNavComponent } from '@components/side-nav/side-nav.component';
 import { PageNotFoundComponent } from '@components/page-not-found/page-not-found.component';
@@ -27,6 +31,21 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserStateInterceptor } from '@interceptors/browser-state.interceptor';
 import { SignalRService } from '@services/signalr.service';
 
+import { MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
+
+const MY_FORMATS = {
+  parse: {
+      dateInput: 'LL',
+  },
+  display: {
+      dateInput: 'LL', // Edit this to change the display format (e.g 'DD/MM/YYYY')
+      monthYearLabel: 'MMM YYYY',
+      dateA11yLabel: 'LL',
+      monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
 
 @NgModule({
   declarations: [
@@ -42,19 +61,27 @@ import { SignalRService } from '@services/signalr.service';
     BrowserTransferStateModule,
     AppRoutingModule,
     HttpClientModule,
+
+    // MaterialUI
+    MatTableModule,
+    MatPaginatorModule,
     MatIconModule,
     MatButtonModule,
     MatProgressBarModule,
     MatSidenavModule,
     MatListModule,
     MatToolbarModule,
-    BrowserAnimationsModule
+    MatSortModule,
+
+    BrowserAnimationsModule,
   ],
   providers: [
     ApiService,
     RouterService,
     SignalRService,
     SignalsResolver,
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: BrowserStateInterceptor,

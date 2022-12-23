@@ -27,8 +27,7 @@ export class SignalRService {
 
     listen() {
         this.connection.on("ReceiveMessage", data => {
-            console.log(data);
+            // console.log(data);
         });
-
     }
 }

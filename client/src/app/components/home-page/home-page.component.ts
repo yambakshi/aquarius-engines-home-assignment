@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID, ViewEncapsulation } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -13,12 +13,7 @@ import * as moment from 'moment';
 @Component({
     selector: 'home-page',
     templateUrl: './home-page.component.html',
-    styleUrls: [
-        './home-page.component.common.scss',
-        './home-page.component.desktop.scss',
-        './home-page.component.mobile.scss'
-    ],
-    encapsulation: ViewEncapsulation.None,
+    styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent {
     subscriptions: { iotSignals: Subscription } = { iotSignals: null };

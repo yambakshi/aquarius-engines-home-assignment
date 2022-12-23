@@ -3,7 +3,7 @@
     public class PeriodicHostedService : BackgroundService
     {
         private readonly ILogger<PeriodicHostedService> _logger;
-        private readonly TimeSpan _period = TimeSpan.FromSeconds(1);
+        private readonly TimeSpan _period = TimeSpan.FromSeconds(10);
         private readonly IServiceScopeFactory _factory;
         private int _executionCount = 0;
         public bool IsEnabled { get; set; } = true;

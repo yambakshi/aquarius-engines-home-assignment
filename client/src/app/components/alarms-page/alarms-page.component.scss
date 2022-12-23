@@ -1,0 +1,93 @@
+.alarms-page-container {
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    background-color: #202020;
+    min-height: 100%;
+    align-items: center;
+
+    > .iot-signals-table-container {
+        padding: 20px 0;
+        width: 90%;
+
+        > .table-inner-container {
+            border: 1px #fff solid;
+
+            > table {
+                width: 100%;
+                background-color: #292929;
+            }
+
+            & th {
+                user-select: none;
+            }
+
+            & .mat-cell {
+                padding-right: 10px;
+            }
+
+            & td.mat-column-timestamp {
+                flex: 0 0 34%;
+                width: 34%;
+            }
+
+            & td.mat-column-value {
+                flex: 0 0 33%;
+                width: 33%;
+            }
+
+            & .mat-row,
+            .mat-header-row,
+            .mat-footer-row,
+            th.mat-header-cell,
+            td.mat-cell,
+            td.mat-footer-cell {
+                color: #fff;
+                border-bottom-color: #fff;
+            }
+
+            & .mat-checkbox-frame {
+                border: 2px solid #fff;
+            }
+
+            & .mat-sort-header-arrow {
+                color: #7845d1;
+            }
+        }
+
+        > .mat-paginator {
+            background-color: #292929;
+            color: #fff;
+            border: 1px #fff solid;
+
+            & .mat-select-value {
+                color: #fff;
+            }
+
+            & .mat-select-arrow {
+                color: #fff;
+            }
+
+            & .mat-paginator-range-label {
+                margin: 0 24px 0 24px;
+            }
+
+            & .mat-form-field-underline {
+                background-color: #fff;
+
+                > .mat-form-field-ripple {
+                    background-color: #fff;
+                }
+            }
+
+            & .mat-button-disabled {
+                color: #8a8a8a;
+            }
+        }
+    }
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
