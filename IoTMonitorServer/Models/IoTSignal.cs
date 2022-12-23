@@ -15,5 +15,7 @@ namespace IoTMonitorServer.Models
         public int value { get; set; }
 
         public string type { get; set; } = null!;
+        
+        public string flag { get; set; } = null!;
     }
 }

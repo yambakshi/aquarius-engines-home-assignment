@@ -23,7 +23,7 @@ namespace IoTMonitorServer.BackgroundServices
         public async Task DoSomethingAsync()
         {
             await Task.Delay(100);
-            var iotSignals = await _iotSignalsService.GetAsync(100);
+            var iotSignals = await _iotSignalsService.GetAlarmsAsync();
             await _hubContext.Clients.All.SendAsync("ReceiveMessage", iotSignals);
             _logger.LogInformation(
                 "Sample Service did something.");

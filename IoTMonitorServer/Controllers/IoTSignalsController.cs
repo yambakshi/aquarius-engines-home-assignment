@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using IoTMonitorServer.Services;
 using IoTMonitorServer.Models;
-using System.Drawing;
-using System.Timers;
 
 namespace IoTMonitorServer.Controllers
 {
@@ -22,8 +20,7 @@ namespace IoTMonitorServer.Controllers
 
         [HttpGet]
         public async Task<List<IoTSignal>> Get() =>
-            await _iotSignalsService.GetAsync(100);
-
+            await _iotSignalsService.GetAlarmsAsync();
 
         [HttpGet("{id:length(24)}")]
         public async Task<ActionResult<IoTSignal>> Get(string id)
@@ -60,7 +57,7 @@ namespace IoTMonitorServer.Controllers
 
             if (sineIoTSignal.value < this.bounds["Sine"][0] || sineIoTSignal.value > this.bounds["Sine"][1])
             {
-                Console.WriteLine("Out of Bounds");
+                sineIoTSignal.flag = "Out of Bounds";
             }
 
             IoTSignal stateIoTSignal = new IoTSignal();
@@ -70,7 +67,7 @@ namespace IoTMonitorServer.Controllers
 
             if (stateIoTSignal.value < this.bounds["State"][0] || stateIoTSignal.value > this.bounds["State"][1])
             {
-                Console.WriteLine("Out of Bounds");
+                stateIoTSignal.flag = "Out of Bounds";
             }
 
             IoTSignal[] newSignals = new IoTSignal[] { sineIoTSignal, stateIoTSignal };

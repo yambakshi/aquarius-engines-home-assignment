@@ -24,6 +24,9 @@ namespace IoTMonitorServer.Services
         public async Task<List<IoTSignal>> GetAsync() =>
             await _signalsCollection.Find(_ => true).ToListAsync();
 
+        public async Task<List<IoTSignal>> GetAlarmsAsync() =>
+            await _signalsCollection.Find(x => x.flag != null).ToListAsync();
+
         public async Task<List<IoTSignal>> GetAsync(int n) =>
             await _signalsCollection.Find(_ => true).Limit(n).ToListAsync();
 
