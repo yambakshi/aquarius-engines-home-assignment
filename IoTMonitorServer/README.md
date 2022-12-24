@@ -20,9 +20,9 @@
 - [Most basic line chart in d3.js](https://d3-graph-gallery.com/graph/line_basic.html)
 
 V Document .NET ASP.NET Links
-Compare pubsub to websockets to client polling
-create alarms table
-flag out of bounds signals in the db
+V Compare pubsub to websockets to client polling
+V create alarms table
+V flag out of bounds signals in the db
 
 - add logging to server
 - [add tooltip to graphs](https://observablehq.com/@d3/line-with-tooltip)
@@ -32,3 +32,7 @@ flag out of bounds signals in the db
 - show anomalies as red dots in the graph
 - add setup and running readme
 - implement sine wave functionality
+- maybe use queue in the server
+- romove all commented code
+- Fix mongo connections string
+- add filter to alarms table
