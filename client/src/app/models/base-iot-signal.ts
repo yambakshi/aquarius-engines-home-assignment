@@ -1,7 +1,7 @@
 import { IoTSignalType } from "app/enums/iot-signal-type.enum";
 
 export class BaseIoTSignal {
-    _id: string;
+    id: string;
     timestamp: number;
     value: number;
     type: IoTSignalType;

@@ -2,7 +2,6 @@ import { Component, Inject, PLATFORM_ID, ViewChild, ViewEncapsulation } from '@a
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { MonitorIoTSignal } from '@models/monitor-iot-signal';
 import { ApiService } from '@services/api.service';
 import { isPlatformBrowser } from '@angular/common';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -10,7 +9,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { Moment } from 'moment';
 import { BaseIoTSignal } from '@models/base-iot-signal';
-import { IoTSignalFlag } from 'app/enums/iot-signal-flag.enum';
 import { IoTSignalStreamlType } from 'app/enums/iot-signal-stream-type.enum';
 
 
@@ -30,7 +28,7 @@ export class AlarmsPageComponent {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     dataSource: MatTableDataSource<AlarmRow>;
     displayedColumns: string[] = ['timestamp', 'value', 'type'];
-    subscriptions: { alarms: Subscription, monitor: Subscription } = { alarms: null, monitor: null };
+    subscriptions: { alarms: Subscription } = { alarms: null };
     alarmsRows: AlarmRow[];
 
     constructor(
@@ -46,30 +44,15 @@ export class AlarmsPageComponent {
             }
         });
 
-        this.subscriptions.alarms = this.apiService.getIoTSignalsObservable(IoTSignalStreamlType.Alarms).subscribe((iotSignals: MonitorIoTSignal[]) => {
-            this.alarmsRows = iotSignals.map((iotSignal: BaseIoTSignal, i: number): AlarmRow => ({
-                index: i,
-                ...iotSignal
-            }))
-        })
-
-        this.subscriptions.monitor = this.apiService.getIoTSignalsObservable(IoTSignalStreamlType.Monitor).subscribe((iotSignals: MonitorIoTSignal[]) => {
-            const newAlarmsRows = iotSignals.reduce((acc, iotSignal: MonitorIoTSignal, i: number): AlarmRow[] => {
-                if (iotSignal.flag !== IoTSignalFlag.OutOfBounds) return acc;
-
-                const ioTSignalRow: AlarmRow = {
+        this.subscriptions.alarms = this.apiService.getIoTSignalsObservable(IoTSignalStreamlType.Alarms).subscribe(
+            (iotSignals: BaseIoTSignal[]) => {
+                this.alarmsRows = iotSignals.map((iotSignal: BaseIoTSignal, i: number): AlarmRow => ({
                     index: i,
                     ...iotSignal
-                }
+                }))
 
-                acc.push(ioTSignalRow);
-
-                return acc;
-            }, [])
-
-            // this.alarmsRows = this.alarmsRows.concat(newAlarmsRows);
-            this.dataSource.data = this.alarmsRows;
-        });
+                this.dataSource.data = this.alarmsRows;
+            })
     }
 
     get isNoIoTSignals(): boolean {

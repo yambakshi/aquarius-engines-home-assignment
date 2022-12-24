@@ -4,9 +4,9 @@ namespace SignalRChat.Hubs
 {
     public class IoTSignalsHub : Hub
     {
-        public async Task SendMessage(string message)
+        public async Task EstablishConnection(string message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            await Clients.All.SendAsync("ConnectionEstablished", message);
         }
     }
 }

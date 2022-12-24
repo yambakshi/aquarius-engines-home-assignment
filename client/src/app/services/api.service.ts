@@ -7,6 +7,7 @@ import { MonitorIoTSignal } from '@models/monitor-iot-signal';
 import { SignalRService } from './signalr.service';
 import { isPlatformBrowser } from '@angular/common';
 import { IoTSignalStreamlType } from 'app/enums/iot-signal-stream-type.enum';
+import { SignalREvent } from 'app/enums/signalr-events.enum';
 
 
 @Injectable({
@@ -38,9 +39,15 @@ export class ApiService {
 
     private establishSignalRConnection(): void {
         this.signalRService.connect();
-        this.signalRService.listen().subscribe((data: any) => {
-            if (!Array.isArray(data)) return;
-            this.setIoTSignals(IoTSignalStreamlType.Monitor, data);
+        this.signalRService.listen(SignalREvent.ConnectionEstablished).subscribe((message: any) => {
+        });
+
+        this.signalRService.listen(SignalREvent.MonitorRefresh).subscribe((iotSignals: any) => {
+            this.setIoTSignals(IoTSignalStreamlType.Monitor, iotSignals);
+        });
+
+        this.signalRService.listen(SignalREvent.AlarmsRefresh).subscribe((alarms: any) => {
+            this.setIoTSignals(IoTSignalStreamlType.Alarms, alarms);
         });
     }
 

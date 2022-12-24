@@ -20,10 +20,7 @@ namespace IoTMonitorServer.Services
                 ioTMonitorDatabaseSettings.Value.MonitorCollectionName);
         }
 
-        public async Task<List<MonitorIoTSignal>> GetAllAsync() =>
-            await _monitorCollection.Find(_ => true).ToListAsync();
-
-        public async Task<List<MonitorIoTSignal>> GetRecentAsync(int? limit)
+        public async Task<List<MonitorIoTSignal>> GetRecentAsync(int? limit = null)
         {
             var results = await _monitorCollection
                 .Find(_ => true)

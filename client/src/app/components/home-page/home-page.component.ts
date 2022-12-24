@@ -43,33 +43,29 @@ export class HomePageComponent {
             }
         });
 
-        this.subscriptions.iotSignals = this.apiService.getIoTSignalsObservable(IoTSignalStreamlType.Monitor).subscribe((iotSignals: MonitorIoTSignal[]) => {
-            const limitedIoTSignals = iotSignals.slice(0, this.limit);
-            this.iotSignals = limitedIoTSignals.reduce((acc, signal: MonitorIoTSignal) => {
-                const { timestamp, type, value, flag } = signal;
+        this.subscriptions.iotSignals = this.apiService.getIoTSignalsObservable(IoTSignalStreamlType.Monitor).subscribe(
+            (iotSignals: MonitorIoTSignal[]) => {
+                const limitedIoTSignals = iotSignals.slice(0, this.limit);
+                this.iotSignals = limitedIoTSignals.reduce((acc, signal: MonitorIoTSignal) => {
+                    const { timestamp, type, value, flag } = signal;
+                    acc[type][flag ? 'anomalies' : 'data'].push({ value, date: timestamp });
 
-                if (flag) {
-                    acc[type].anomalies.push({ value, date: timestamp });
-                } else {
-                    acc[type].data.push({ value, date: timestamp });
-                }
+                    return acc;
+                }, {
+                    [IoTSignalType.Sine]: {
+                        data: [],
+                        anomalies: [],
+                        svg: this.iotSignals[IoTSignalType.Sine].svg
+                    },
+                    [IoTSignalType.State]: {
+                        data: [],
+                        anomalies: [],
+                        svg: this.iotSignals[IoTSignalType.State].svg
+                    }
+                });
 
-                return acc;
-            }, {
-                [IoTSignalType.Sine]: {
-                    data: [],
-                    anomalies: [],
-                    svg: this.iotSignals[IoTSignalType.Sine].svg
-                },
-                [IoTSignalType.State]: {
-                    data: [],
-                    anomalies: [],
-                    svg: this.iotSignals[IoTSignalType.State].svg
-                }
+                this.afterViewCheckedEnabled = true;
             });
-
-            this.afterViewCheckedEnabled = true;
-        });
 
         const margin = { top: 10, right: 10, bottom: 35, left: 20 };
         const width = 750 - margin.left - margin.right;

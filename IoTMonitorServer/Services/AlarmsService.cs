@@ -24,17 +24,7 @@ namespace IoTMonitorServer.Services
         public async Task<List<BaseIoTSignal>> GetAsync() =>
             await _alarmsCollection.Find(_ => true).ToListAsync();
 
-        public async Task CreateAsync(BaseIoTSignal newSignal) =>
-            await _alarmsCollection.InsertOneAsync(newSignal);
-
         public async Task CreateManyAsync(BaseIoTSignal[] newSignals) =>
             await _alarmsCollection.InsertManyAsync(newSignals);
-
-        public async Task UpdateAsync(string id, BaseIoTSignal updatedSignal) =>
-            await _alarmsCollection.ReplaceOneAsync(x => x.Id == id, updatedSignal);
-
-        public async Task RemoveAsync(string id) =>
-            await _alarmsCollection.DeleteOneAsync(x => x.Id == id);
-
     }
 }

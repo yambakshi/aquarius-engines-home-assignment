@@ -3,29 +3,21 @@ using IoTMonitorServer.Models;
 using IoTMonitorServer.Services;
 using SignalRChat.Hubs;
 
-//var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
-
-// CORS
-
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy(name: MyAllowSpecificOrigins,
-//                      policy =>
-//                      {
-//                          policy.WithOrigins("http://localhost:4200");
-//                      });
-//});
-
 
 // Add services to the container.
 
 builder.Services.AddSignalR();
 
-builder.Services.AddScoped<SampleService>();
-builder.Services.AddSingleton<PeriodicHostedService>();
+builder.Services.AddScoped<MonitorBackgroundService>();
+builder.Services.AddScoped<AlarmsBackgroundService>();
+builder.Services.AddSingleton<MonitorPeriodicHostedService>();
 builder.Services.AddHostedService(
-    provider => provider.GetRequiredService<PeriodicHostedService>());
+    provider => provider.GetRequiredService<MonitorPeriodicHostedService>());
+
+builder.Services.AddSingleton<AlarmsPeriodicHostedService>();
+builder.Services.AddHostedService(
+    provider => provider.GetRequiredService<AlarmsPeriodicHostedService>());
 
 builder.Services.Configure<IoTMonitorDatabaseSettings>(
     builder.Configuration.GetSection("IoTMonitorDatabase"));
@@ -48,10 +40,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-// app.UseHttpsRedirection();
-
-// app.UseCors(MyAllowSpecificOrigins);
 
 app.UseCors(builder =>
 {

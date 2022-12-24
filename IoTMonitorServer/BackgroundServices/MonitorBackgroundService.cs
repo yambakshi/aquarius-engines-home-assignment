@@ -4,15 +4,15 @@ using SignalRChat.Hubs;
 
 namespace IoTMonitorServer.BackgroundServices
 {
-    public class SampleService
+    public class MonitorBackgroundService
     {
-        private readonly ILogger<SampleService> _logger;
+        private readonly ILogger<MonitorBackgroundService> _logger;
         private readonly MonitorService _monitorService;
         private readonly IHubContext<IoTSignalsHub> _hubContext;
         private readonly int _signalsPerSecond = 1000;
 
-        public SampleService(
-            ILogger<SampleService> logger,
+        public MonitorBackgroundService(
+            ILogger<MonitorBackgroundService> logger,
             MonitorService monitorService,
             IHubContext<IoTSignalsHub> hubContext)
         {
@@ -21,10 +21,10 @@ namespace IoTMonitorServer.BackgroundServices
             _hubContext = hubContext;
         }
 
-        public async Task DoSomethingAsync()
+        public async Task RefreshMonitorAsync()
         {
             await Task.Delay(100);
-            var iotSignals = await _monitorService.GetAllAsync();
+            var iotSignals = await _monitorService.GetRecentAsync();
 
             if (iotSignals.Count >= _signalsPerSecond * 2)
             {
@@ -32,9 +32,9 @@ namespace IoTMonitorServer.BackgroundServices
                 _monitorService.RemoveAllBeforeAsync(iotSignals.Last().timestamp);
             }
 
-            await _hubContext.Clients.All.SendAsync("ReceiveMessage", iotSignals);
+            await _hubContext.Clients.All.SendAsync("MonitorRefresh", iotSignals);
             _logger.LogInformation(
-                "Sample Service did something.");
+                "Monitor was refreshed");
         }
     }
 }

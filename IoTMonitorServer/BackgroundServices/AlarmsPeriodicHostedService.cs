@@ -1,15 +1,15 @@
 ﻿namespace IoTMonitorServer.BackgroundServices
 {
-    public class PeriodicHostedService : BackgroundService
+    public class AlarmsPeriodicHostedService : BackgroundService
     {
-        private readonly ILogger<PeriodicHostedService> _logger;
+        private readonly ILogger<AlarmsPeriodicHostedService> _logger;
         private readonly TimeSpan _period = TimeSpan.FromSeconds(1);
         private readonly IServiceScopeFactory _factory;
         private int _executionCount = 0;
         public bool IsEnabled { get; set; } = true;
 
-        public PeriodicHostedService(
-            ILogger<PeriodicHostedService> logger,
+        public AlarmsPeriodicHostedService(
+            ILogger<AlarmsPeriodicHostedService> logger,
             IServiceScopeFactory factory)
         {
             _logger = logger;
@@ -28,22 +28,22 @@
                     if (IsEnabled)
                     {
                         await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
-                        SampleService sampleService = asyncScope.ServiceProvider.GetRequiredService<SampleService>();
-                        await sampleService.DoSomethingAsync();
+                        AlarmsBackgroundService alarmsBackgroundService = asyncScope.ServiceProvider.GetRequiredService<AlarmsBackgroundService>();
+                        await alarmsBackgroundService.RefreshAlarmsAsync();
                         _executionCount++;
                         _logger.LogInformation(
-                            $"Executed PeriodicHostedService - Count: {_executionCount}");
+                            $"Executed AlarmsBackgroundService - Count: {_executionCount}");
                     }
                     else
                     {
                         _logger.LogInformation(
-                            "Skipped PeriodicHostedService");
+                            "Skipped AlarmsBackgroundService");
                     }
                 }
                 catch (Exception ex)
                 {
                     _logger.LogInformation(
-                        $"Failed to execute PeriodicHostedService with exception message {ex.Message}. Good luck next round!");
+                        $"Failed to execute AlarmsBackgroundService with exception message {ex.Message}. Good luck next round!");
                 }
             }
         }
