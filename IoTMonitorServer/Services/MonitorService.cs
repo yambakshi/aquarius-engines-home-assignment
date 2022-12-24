@@ -20,6 +20,9 @@ namespace IoTMonitorServer.Services
                 ioTMonitorDatabaseSettings.Value.MonitorCollectionName);
         }
 
+        public async Task<List<MonitorIoTSignal>> GetAllAsync() =>
+            await _monitorCollection.Find(_ => true).ToListAsync();
+
         public async Task<List<MonitorIoTSignal>> GetRecentAsync(int? limit)
         {
             var results = await _monitorCollection
@@ -30,16 +33,11 @@ namespace IoTMonitorServer.Services
             return results;
         }
 
-        public async Task CreateAsync(MonitorIoTSignal newSignal) =>
-            await _monitorCollection.InsertOneAsync(newSignal);
         public async Task CreateManyAsync(MonitorIoTSignal[] newSignals) =>
             await _monitorCollection.InsertManyAsync(newSignals);
 
-        public async Task UpdateAsync(string id, MonitorIoTSignal updatedSignal) =>
-            await _monitorCollection.ReplaceOneAsync(x => x.Id == id, updatedSignal);
-
-        public async Task RemoveAsync(string id) =>
-            await _monitorCollection.DeleteOneAsync(x => x.Id == id);
+        public async Task RemoveAllBeforeAsync(long timestamp) =>
+            await _monitorCollection.DeleteManyAsync("{ timestamp: { $lt: " + timestamp + " } }");
 
     }
 }
