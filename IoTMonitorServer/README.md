@@ -18,6 +18,7 @@
 - [Zoomable Bar Chart](https://observablehq.com/@d3/zoomable-bar-chart)
 
 - [Most basic line chart in d3.js](https://d3-graph-gallery.com/graph/line_basic.html)
+- [Most basic connected scatter plot](https://d3-graph-gallery.com/graph/connectedscatter_basic.html)
 
 V Document .NET ASP.NET Links
 V Compare pubsub to websockets to client polling

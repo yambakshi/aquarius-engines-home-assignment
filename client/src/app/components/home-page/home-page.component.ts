@@ -23,11 +23,12 @@ export class HomePageComponent {
     iotSignals: {
         [key in IoTSignalType]: {
             data: { value: number, date: any }[],
+            anomalies: { value: number, date: any }[],
             svg: any
         }
     } = {
-            [IoTSignalType.Sine]: { data: null, svg: null },
-            [IoTSignalType.State]: { data: null, svg: null }
+            [IoTSignalType.Sine]: { data: null, anomalies: null, svg: null },
+            [IoTSignalType.State]: { data: null, anomalies: null, svg: null }
         };
 
     constructor(
@@ -43,18 +44,26 @@ export class HomePageComponent {
         });
 
         this.subscriptions.iotSignals = this.apiService.getIoTSignalsObservable(IoTSignalStreamlType.Monitor).subscribe((iotSignals: MonitorIoTSignal[]) => {
-            const limitedIoTSignals = iotSignals.slice(iotSignals.length - this.limit, iotSignals.length);
+            const limitedIoTSignals = iotSignals.slice(0, this.limit);
             this.iotSignals = limitedIoTSignals.reduce((acc, signal: MonitorIoTSignal) => {
-                const { timestamp, type, value } = signal;
-                acc[type].data.push({ value, date: timestamp });
+                const { timestamp, type, value, flag } = signal;
+
+                if (flag) {
+                    acc[type].anomalies.push({ value, date: timestamp });
+                } else {
+                    acc[type].data.push({ value, date: timestamp });
+                }
+
                 return acc;
             }, {
                 [IoTSignalType.Sine]: {
                     data: [],
+                    anomalies: [],
                     svg: this.iotSignals[IoTSignalType.Sine].svg
                 },
                 [IoTSignalType.State]: {
                     data: [],
+                    anomalies: [],
                     svg: this.iotSignals[IoTSignalType.State].svg
                 }
             });
@@ -96,17 +105,30 @@ export class HomePageComponent {
         Object.values(IoTSignalType).forEach(type => this.refreshSvg(type));
     }
 
+    private createSvg(iotSignalType: IoTSignalType): void {
+        const { height, width, margin } = this.graphConfig;
+
+        // append the svg object to the body of the page
+        this.iotSignals[iotSignalType].svg = d3.select(`figure#${iotSignalType}`)
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+    }
+
     private refreshSvg(iotSignalType: IoTSignalType): void {
         d3.selectAll(`figure#${iotSignalType} > svg > g > *`).remove();
 
         const { type, range, height, width, margin, curve, stroke } = this.graphConfig;
         const X = d3.map(this.iotSignals[iotSignalType].data, x => x.date);
         const Y = d3.map(this.iotSignals[iotSignalType].data, y => y.value);
+        const Yanomalies = d3.map(this.iotSignals[iotSignalType].anomalies, y => y.value);
         const I: any = d3.range(X.length);
 
         // Compute default domains.
         const xDomain = d3.extent(X);
-        const yDomain = [0, Y.length > 0 ? d3.max(Y) : 5000];
+        const yDomain = [0, Yanomalies.length > 0 ? d3.max(Yanomalies) : Y.length > 0 ? d3.max(Y) : 5000];
 
         // Construct scales and axes.
         const xScale = type.x(xDomain, range.x);
@@ -154,72 +176,18 @@ export class HomePageComponent {
             .attr("stroke-linejoin", stroke.linejoin)
             .attr("stroke-opacity", stroke.opacity)
             .attr("d", line(I));
-    }
 
-    private createSvg(iotSignalType: IoTSignalType): void {
-        const { type, range, height, width, margin, curve, stroke } = this.graphConfig;
-        const X = d3.map(this.iotSignals[iotSignalType].data, x => x.date);
-        const Y = d3.map(this.iotSignals[iotSignalType].data, y => y.value);
-        const I: any = d3.range(X.length);
-
-        // Compute default domains.
-        const xDomain = d3.extent(X);
-        const yDomain = [0, Y.length > 0 ? d3.max(Y) : 5000];
-
-        // Construct scales and axes.
-        const xScale = type.x(xDomain, range.x);
-        const yScale = type.y(yDomain, range.y);
-        const xAxis = d3.axisBottom(xScale).ticks(d3.timeMillisecond.every(5), '%H:%M:%S.%L').tickSizeOuter(0);
-        const yAxis = d3.axisLeft(yScale).ticks(height / 40);
-
-        // Construct a line generator.
-        const line = d3.line()
-            .curve(curve)
-            .x((i: any) => xScale(X[i]))
-            .y((i: any) => yScale(Y[i]));
-
-        // append the svg object to the body of the page
-        this.iotSignals[iotSignalType].svg = d3.select(`figure#${iotSignalType}`)
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+        // Add anomalies
+        this.iotSignals[iotSignalType].svg
             .append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
-
-        // Add X axis --> it is a date format
-        this.iotSignals[iotSignalType].svg.append("g")
-            .attr("transform", `translate(0,${yScale(1)})`)
-            .call(xAxis)
-            .selectAll("text")
-            .style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".15em")
-            .attr("transform", "rotate(-65)");
-
-        // Add Y axis
-        this.iotSignals[iotSignalType].svg.append("g")
-            .attr("transform", `translate(${margin.left},0)`)
-            .call(yAxis)
-            .call(g => g.select(".domain").remove())
-            .call(g => g.selectAll(".tick line").clone()
-                .attr("x2", width - margin.left - margin.right)
-                .attr("stroke-opacity", 0.1))
-            .call(g => g.append("text")
-                .attr("x", -margin.left)
-                .attr("y", 10)
-                .attr("fill", "currentColor")
-                .attr("text-anchor", "start")
-                .text(''));
-
-        // Add line
-        this.iotSignals[iotSignalType].svg.append("path")
-            .attr("fill", "none")
-            .attr("stroke", stroke.color)
-            .attr("stroke-width", stroke.width)
-            .attr("stroke-linecap", stroke.linecap)
-            .attr("stroke-linejoin", stroke.linejoin)
-            .attr("stroke-opacity", stroke.opacity)
-            .attr("d", line(I));
+            .selectAll("dot")
+            .data(this.iotSignals[iotSignalType].anomalies)
+            .enter()
+            .append("circle")
+            .attr("cx", (d: any) => xScale(d.date))
+            .attr("cy", (d: any) => yScale(d.value))
+            .attr("r", 5)
+            .attr("fill", "#ff0000")
     }
 
     ngOnDestroy() {
