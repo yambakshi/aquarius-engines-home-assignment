@@ -1,29 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using IoTMonitorServer.Services;
 using IoTMonitorServer.Models;
-using Microsoft.AspNetCore.Http;
-using System.Web;
 
 namespace IoTMonitorServer.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class IoTSignalsController : Controller
+    public class MonitorController : Controller
     {
-        private readonly IoTSignalsService _iotSignalsService;
+        private readonly MonitorService _monitorService;
+        private readonly AlarmsService _alarmsService;
         private Dictionary<string, int[]> bounds = new Dictionary<string, int[]>()
         {
             { "Sine", new int[] { 0, 32 } },
             {  "State", new int[] { 256, 4095 } }
         };
 
-        public IoTSignalsController(IoTSignalsService iotSignalsService) =>
-            _iotSignalsService = iotSignalsService;
-
-        [HttpGet] // GET /api/iotsignals
-        public async Task<List<IoTSignal>> Get([FromQuery(Name = "flag")] string? flag, [FromQuery(Name = "limit")] int? limit)
+        public MonitorController(MonitorService monitorService, AlarmsService alarmsService)
         {
-            var iotSignals = await _iotSignalsService.GetAsync(flag, limit);
+            _monitorService = monitorService;
+            _alarmsService = alarmsService;
+        }   
+
+        [HttpGet] // GET /api/iotsignals?limit=100
+        public async Task<List<MonitorIoTSignal>> Get([FromQuery(Name = "limit")] int? limit)
+        {
+            var iotSignals = await _monitorService.GetRecentAsync(limit);
             return iotSignals;
         }
 
@@ -31,7 +33,6 @@ namespace IoTMonitorServer.Controllers
         public async Task<IActionResult> Post(IoTTransmission ioTTransmission)            
         {
             DateTimeOffset now = (DateTimeOffset)DateTime.UtcNow;
-            // long currentTimestamp = now.ToUnixTimeSeconds();
             long currentTimestamp = now.ToUnixTimeMilliseconds();
 
             //IoTSignal sineIoTSignal = new SineIoTSignal();
@@ -42,29 +43,48 @@ namespace IoTMonitorServer.Controllers
             //stateIoTSignal.Timestamp = currentTimestamp;
             //stateIoTSignal.Value = ioTTransmission.State;
 
-            IoTSignal sineIoTSignal = new IoTSignal();
+            List<BaseIoTSignal> alarms = new List<BaseIoTSignal>();
+
+            MonitorIoTSignal sineIoTSignal = new MonitorIoTSignal();
             sineIoTSignal.timestamp = currentTimestamp;
             sineIoTSignal.type = "Sine";
             sineIoTSignal.value = ioTTransmission.Sine;
 
             if (sineIoTSignal.value < this.bounds["Sine"][0] || sineIoTSignal.value > this.bounds["Sine"][1])
             {
+                BaseIoTSignal sineIoTSignalAlarm = new BaseIoTSignal();
+                sineIoTSignalAlarm.timestamp = sineIoTSignal.timestamp;
+                sineIoTSignalAlarm.type = sineIoTSignal.type;
+                sineIoTSignalAlarm.value = sineIoTSignal.value;
+                alarms.Add(sineIoTSignalAlarm);
+
                 sineIoTSignal.flag = "out_of_bounds";
             }
 
-            IoTSignal stateIoTSignal = new IoTSignal();
+            MonitorIoTSignal stateIoTSignal = new MonitorIoTSignal();
             stateIoTSignal.timestamp = currentTimestamp;
             stateIoTSignal.type = "State";
             stateIoTSignal.value = ioTTransmission.State;
 
             if (stateIoTSignal.value < this.bounds["State"][0] || stateIoTSignal.value > this.bounds["State"][1])
             {
+                BaseIoTSignal stateIoTSignalAlarm = new BaseIoTSignal();
+                stateIoTSignalAlarm.timestamp = stateIoTSignal.timestamp;
+                stateIoTSignalAlarm.type = stateIoTSignal.type;
+                stateIoTSignalAlarm.value = stateIoTSignal.value;
+                alarms.Add(stateIoTSignalAlarm);
+
                 stateIoTSignal.flag = "out_of_bounds";
             }
 
-            IoTSignal[] newSignals = new IoTSignal[] { sineIoTSignal, stateIoTSignal };
+            MonitorIoTSignal[] newSignals = new MonitorIoTSignal[] { sineIoTSignal, stateIoTSignal };
 
-            await _iotSignalsService.CreateManyAsync(newSignals);
+            await _monitorService.CreateManyAsync(newSignals);
+
+            if (alarms.Count > 0)
+            {
+                await _alarmsService.CreateManyAsync(alarms.ToArray());
+            }
 
             return CreatedAtAction(nameof(Get),
                 new

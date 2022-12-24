@@ -6,6 +6,8 @@
 
         public string DatabaseName { get; set; } = null!;
 
-        public string IoTSignalsCollectionName { get; set; } = null!;
+        public string MonitorCollectionName { get; set; } = null!;
+
+        public string AlarmsCollectionName { get; set; } = null!;
     }
 }

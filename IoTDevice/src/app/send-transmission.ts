@@ -4,7 +4,7 @@ import { Transmission } from './models/transmission';
 export function sendTransmission(transmission: Transmission): Promise<any> {
     const options = {
         host: 'localhost',
-        path: '/api/iotsignals',
+        path: '/api/monitor',
         method: 'POST',
         port: 7095,
         headers: {

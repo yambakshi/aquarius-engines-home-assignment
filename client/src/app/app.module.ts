@@ -25,7 +25,8 @@ import { AlarmsPageComponent } from '@components/alarms-page/alarms-page.compone
 import { RouterService } from '@services/router.service';
 import { ApiService } from '@services/api.service';
 import { ApiHttpInterceptor } from '@interceptors/api.interceptor';
-import { SignalsResolver } from '@resolvers/iot-signal.resolver';
+import { MonitorResolver } from '@resolvers/monitor.resolver';
+import { AlarmsResolver } from '@resolvers/alarms.resolver';
 
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserStateInterceptor } from '@interceptors/browser-state.interceptor';
@@ -36,13 +37,13 @@ import { MAT_DATE_FORMATS } from '@angular/material/core';
 
 const MY_FORMATS = {
   parse: {
-      dateInput: 'LL',
+    dateInput: 'LL',
   },
   display: {
-      dateInput: 'LL', // Edit this to change the display format (e.g 'DD/MM/YYYY')
-      monthYearLabel: 'MMM YYYY',
-      dateA11yLabel: 'LL',
-      monthYearA11yLabel: 'MMMM YYYY',
+    dateInput: 'LL', // Edit this to change the display format (e.g 'DD/MM/YYYY')
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
   },
 };
 
@@ -79,7 +80,8 @@ const MY_FORMATS = {
     ApiService,
     RouterService,
     SignalRService,
-    SignalsResolver,
+    MonitorResolver,
+    AlarmsResolver,
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
     { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
     {

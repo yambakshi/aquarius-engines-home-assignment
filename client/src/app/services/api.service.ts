@@ -2,16 +2,21 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { IoTSignal } from '@models/iot-signal';
+import { BaseIoTSignal } from '@models/base-iot-signal';
+import { MonitorIoTSignal } from '@models/monitor-iot-signal';
 import { SignalRService } from './signalr.service';
 import { isPlatformBrowser } from '@angular/common';
+import { IoTSignalStreamlType } from 'app/enums/iot-signal-stream-type.enum';
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class ApiService {
-    private iotSignalsSubject: BehaviorSubject<IoTSignal[]>;
+    private iotSignalsSubjects: {
+        monitor: BehaviorSubject<MonitorIoTSignal[]>,
+        alarms: BehaviorSubject<BaseIoTSignal[]>
+    };
     private httpOptions: {} = {
         headers: {},
         responseType: 'json'
@@ -21,7 +26,10 @@ export class ApiService {
         @Inject(PLATFORM_ID) private platformId: any,
         private signalRService: SignalRService,
         private http: HttpClient) {
-        this.iotSignalsSubject = new BehaviorSubject<IoTSignal[]>([]);
+        this.iotSignalsSubjects = {
+            monitor: new BehaviorSubject<MonitorIoTSignal[]>([]),
+            alarms: new BehaviorSubject<BaseIoTSignal[]>([])
+        }
 
         if (isPlatformBrowser(this.platformId)) {
             this.establishSignalRConnection();
@@ -32,20 +40,20 @@ export class ApiService {
         this.signalRService.connect();
         this.signalRService.listen().subscribe((data: any) => {
             if (!Array.isArray(data)) return;
-            this.setIoTSignals(data);
+            this.setIoTSignals(IoTSignalStreamlType.Monitor, data);
         });
     }
 
-    getIoTSignalsObservable(): Observable<IoTSignal[]> {
-        return this.iotSignalsSubject.asObservable();
+    getIoTSignalsObservable(streamType: IoTSignalStreamlType): Observable<any[]> {
+        return this.iotSignalsSubjects[streamType].asObservable();
     }
 
-    setIoTSignals(iotSignals: IoTSignal[]): void {
-        this.iotSignalsSubject.next(iotSignals);
+    setIoTSignals(streamType: IoTSignalStreamlType, iotSignals: MonitorIoTSignal[]): void {
+        this.iotSignalsSubjects[streamType].next(iotSignals);
     }
 
-    getIoTSignals(filter: { flag?: string, limit?: number }): any {
-        let path = '/api/iotsignals';
+    getMonitorData(filter: { flag?: string, limit?: number }): any {
+        let path = '/api/monitor';
         if (Object.keys(filter).length > 0) {
             const encodedParams = Object.entries(filter).reduce((acc, [key, val]) =>
                 ({ ...acc, [key]: encodeURIComponent(val) }), {});
@@ -56,7 +64,18 @@ export class ApiService {
         return this.http.get(path, this.httpOptions)
             .pipe(
                 map((res: any) => {
-                    this.setIoTSignals(res);
+                    this.setIoTSignals(IoTSignalStreamlType.Monitor, res);
+                    return res;
+                }),
+                catchError(this.handleError));
+    }
+
+    getAlarms(): any {
+        const path = '/api/alarms';
+        return this.http.get(path, this.httpOptions)
+            .pipe(
+                map((res: any) => {
+                    this.setIoTSignals(IoTSignalStreamlType.Alarms, res);
                     return res;
                 }),
                 catchError(this.handleError));

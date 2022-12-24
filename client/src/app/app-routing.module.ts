@@ -2,17 +2,18 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from '@components/page-not-found/page-not-found.component';
 import { HomePageComponent } from '@components/home-page/home-page.component';
-import { SignalsResolver } from '@resolvers/iot-signal.resolver';
+import { MonitorResolver } from '@resolvers/monitor.resolver';
 import { AlarmsPageComponent } from '@components/alarms-page/alarms-page.component';
+import { AlarmsResolver } from '@resolvers/alarms.resolver';
 
 const routes: Routes = [{
   path: '',
-  resolve: { resolverResponse: SignalsResolver },
+  resolve: { resolverResponse: MonitorResolver },
   component: HomePageComponent
 },
 {
   path: 'alarms',
-  resolve: { resolverResponse: SignalsResolver },
+  resolve: { resolverResponse: AlarmsResolver },
   component: AlarmsPageComponent
 },
 {

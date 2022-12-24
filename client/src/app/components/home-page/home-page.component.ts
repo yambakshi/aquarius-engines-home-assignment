@@ -2,11 +2,12 @@ import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { IoTSignal } from '@models/iot-signal';
+import { MonitorIoTSignal } from '@models/monitor-iot-signal';
 import { ApiService } from '@services/api.service';
 import { isPlatformBrowser } from '@angular/common';
 import { IoTSignalType } from 'app/enums/iot-signal-type.enum';
 import * as d3 from 'd3';
+import { IoTSignalStreamlType } from 'app/enums/iot-signal-stream-type.enum';
 
 
 @Component({
@@ -15,6 +16,7 @@ import * as d3 from 'd3';
     styleUrls: ['./home-page.component.scss']
 })
 export class HomePageComponent {
+    readonly limit: number = 100;
     subscriptions: { iotSignals: Subscription } = { iotSignals: null };
     afterViewCheckedEnabled: boolean = true;
     graphConfig: any;
@@ -40,8 +42,9 @@ export class HomePageComponent {
             }
         });
 
-        this.subscriptions.iotSignals = this.apiService.getIoTSignalsObservable().subscribe((iotSignals: IoTSignal[]) => {
-            this.iotSignals = iotSignals.reduce((acc, signal: IoTSignal) => {
+        this.subscriptions.iotSignals = this.apiService.getIoTSignalsObservable(IoTSignalStreamlType.Monitor).subscribe((iotSignals: MonitorIoTSignal[]) => {
+            const limitedIoTSignals = iotSignals.slice(iotSignals.length - this.limit, iotSignals.length);
+            this.iotSignals = limitedIoTSignals.reduce((acc, signal: MonitorIoTSignal) => {
                 const { timestamp, type, value } = signal;
                 acc[type].data.push({ value, date: timestamp });
                 return acc;

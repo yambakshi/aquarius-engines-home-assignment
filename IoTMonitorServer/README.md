@@ -36,3 +36,4 @@ V flag out of bounds signals in the db
 - romove all commented code
 - Fix mongo connections string
 - add filter to alarms table
+- Rename server folder to `server`

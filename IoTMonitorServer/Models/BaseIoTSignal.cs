@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 namespace IoTMonitorServer.Models
 {
-    public class IoTSignal
+    public class BaseIoTSignal
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -15,7 +15,5 @@ namespace IoTMonitorServer.Models
         public int value { get; set; }
 
         public string type { get; set; } = null!;
-        
-        public string flag { get; set; } = null!;
     }
 }

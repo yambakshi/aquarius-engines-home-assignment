@@ -30,7 +30,8 @@ builder.Services.AddHostedService(
 builder.Services.Configure<IoTMonitorDatabaseSettings>(
     builder.Configuration.GetSection("IoTMonitorDatabase"));
 
-builder.Services.AddSingleton<IoTSignalsService>();
+builder.Services.AddSingleton<MonitorService>();
+builder.Services.AddSingleton<AlarmsService>();
 
 builder.Services.AddControllers();
 
