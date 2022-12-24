@@ -1,5 +1,5 @@
 import http from 'http';
-import { Transmission } from './models/transmission';
+import { Transmission } from '../models/transmission';
 
 export function sendTransmission(transmission: Transmission): Promise<any> {
     const options = {

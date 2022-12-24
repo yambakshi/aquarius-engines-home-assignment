@@ -1,16 +1,16 @@
-import { logger } from '../config';
+import { logger } from '../../config';
 import { sendTransmission } from './send-transmission';
-import { SignalType } from './enums/signal-type.enum';
-import { StateSignal } from './state-signal';
-import { SineSignal } from './sine-signal';
+import { SignalType } from '../enums/signal-type.enum';
+import { StateSignal } from '../signals/state-signal';
+import { SineSignal } from '../signals/sine-signal';
 
 export class Transmitter {
     private sineSignal: SineSignal;
     private stateSignal: StateSignal;
 
-    constructor() {
+    constructor(updateRate: number) {
         const currTimestamp = this.getTimestampInSeconds();
-        this.sineSignal = new SineSignal(currTimestamp);
+        this.sineSignal = new SineSignal(currTimestamp, [0, 32], updateRate);
         this.stateSignal = new StateSignal(currTimestamp);
     }
 

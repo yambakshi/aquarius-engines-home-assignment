@@ -1,4 +1,4 @@
-import { logger } from '../config';
+import { logger } from '../../config';
 
 export class BaseSignal {
     readonly anomalyTimeframe: number[] = [1, 6];
