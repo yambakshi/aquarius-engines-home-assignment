@@ -97,7 +97,10 @@ export class HomePageComponent {
 
     ngAfterViewInit(): void {
         if (!isPlatformBrowser(this.platformId)) return;
-        Object.values(IoTSignalType).forEach(type => this.createSvg(type));
+        Object.values(IoTSignalType).forEach(type => {
+            this.createSvg(type);
+            this.refreshSvg(type);
+        });
     }
 
     ngAfterViewChecked(): void {
@@ -133,7 +136,7 @@ export class HomePageComponent {
         // Construct scales and axes.
         const xScale = type.x(xDomain, range.x);
         const yScale = type.y(yDomain, range.y);
-        const xAxis = d3.axisBottom(xScale).ticks(d3.timeMillisecond.every(5), '%H:%M:%S.%L').tickSizeOuter(0);
+        const xAxis = d3.axisBottom(xScale).ticks(d3.timeMillisecond.every(10), '%H:%M:%S.%L').tickSizeOuter(0);
         const yAxis = d3.axisLeft(yScale).ticks(height / 40);
 
         // Construct a line generator.
