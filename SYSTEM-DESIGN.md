@@ -33,5 +33,5 @@ The `IoT Device` transmits 2 signals to the server every 2 milliseconds (1000 si
   - If the amount of IoT signals fetched is greater than or equals to 2000 (i.e 2 seconds have passed), the server will delete the 1000 signals that are older than the timestamp of the 1000th most recent IoT signal fetched from `IoT Signals` collection, thus keeping at least the last second of transmitted signals (i.e 1000 signals) at all times.
 
 ### Client
-- **Alarms Page** - Goes over the 1000 new signals, filters the signals that are flagged with `out_of_bounds` and adds them to the table.
-- **Monitor Page** - Takes most recent 100 signals from the received 1000 signals and updates the graphs.
+- **Alarms Page** - Receives a range of alarms (using pagination).
+- **Monitor Page** - Receives most recent 100 signals from the received 1000 signals and updates the graphs.
