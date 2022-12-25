@@ -5,7 +5,6 @@
         private readonly ILogger<MonitorPeriodicHostedService> _logger;
         private readonly TimeSpan _period = TimeSpan.FromSeconds(1);
         private readonly IServiceScopeFactory _factory;
-        private int _executionCount = 0;
         public bool IsEnabled { get; set; } = true;
 
         public MonitorPeriodicHostedService(
@@ -30,9 +29,6 @@
                         await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
                         MonitorBackgroundService monitorBackgroundService = asyncScope.ServiceProvider.GetRequiredService<MonitorBackgroundService>();
                         await monitorBackgroundService.RefreshMonitorAsync();
-                        _executionCount++;
-                        _logger.LogInformation(
-                            $"Executed MonitorPeriodicHostedService - Count: {_executionCount}");
                     }
                     else
                     {

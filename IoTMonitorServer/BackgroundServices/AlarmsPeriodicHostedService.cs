@@ -5,7 +5,6 @@
         private readonly ILogger<AlarmsPeriodicHostedService> _logger;
         private readonly TimeSpan _period = TimeSpan.FromSeconds(1);
         private readonly IServiceScopeFactory _factory;
-        private int _executionCount = 0;
         public bool IsEnabled { get; set; } = true;
 
         public AlarmsPeriodicHostedService(
@@ -30,9 +29,6 @@
                         await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
                         AlarmsBackgroundService alarmsBackgroundService = asyncScope.ServiceProvider.GetRequiredService<AlarmsBackgroundService>();
                         await alarmsBackgroundService.RefreshAlarmsAsync();
-                        _executionCount++;
-                        _logger.LogInformation(
-                            $"Executed AlarmsBackgroundService - Count: {_executionCount}");
                     }
                     else
                     {

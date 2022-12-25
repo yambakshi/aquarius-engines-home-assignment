@@ -6,7 +6,7 @@ namespace IoTMonitorServer.Services
 {
     public class MonitorService
     {
-        private readonly IMongoCollection<MonitorIoTSignal> _monitorCollection;
+        private readonly IMongoCollection<MonitorIoTSignalModel> _monitorCollection;
 
         public MonitorService(IOptions<IoTMonitorDatabaseSettings> ioTMonitorDatabaseSettings)
         {
@@ -16,11 +16,11 @@ namespace IoTMonitorServer.Services
             var mongoDatabase = mongoClient.GetDatabase(
                 ioTMonitorDatabaseSettings.Value.DatabaseName);
 
-            _monitorCollection = mongoDatabase.GetCollection<MonitorIoTSignal>(
+            _monitorCollection = mongoDatabase.GetCollection<MonitorIoTSignalModel>(
                 ioTMonitorDatabaseSettings.Value.MonitorCollectionName);
         }
 
-        public async Task<List<MonitorIoTSignal>> GetRecentAsync(int? limit = null)
+        public async Task<List<MonitorIoTSignalModel>> GetRecentAsync(int? limit = null)
         {
             var results = await _monitorCollection
                 .Find(_ => true)
@@ -30,7 +30,7 @@ namespace IoTMonitorServer.Services
             return results;
         }
 
-        public async Task CreateManyAsync(MonitorIoTSignal[] newSignals) =>
+        public async Task CreateManyAsync(MonitorIoTSignalModel[] newSignals) =>
             await _monitorCollection.InsertManyAsync(newSignals);
 
         public async Task RemoveAllBeforeAsync(long timestamp) =>

@@ -44,10 +44,12 @@ V flag out of bounds signals in the db
 X - fetch all data on each refresh (currently only the in bounds data is fetched because of the flag)
 X - maybe add state mgmt in angular
 V - show anomalies as red dots in the graph
-- add setup and running readme
+V - add setup and running readme
 V - implement sine wave functionality
 X - maybe use queue in the server
 - remove all commented code
 - Fix mongo connections string
 - add filter to alarms table
 - Rename server folder to `server`
+- implement pagination
+- Verify the periodic hosted services are on separate threads

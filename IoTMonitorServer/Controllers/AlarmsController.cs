@@ -16,7 +16,7 @@ namespace IoTMonitorServer.Controllers
         }
 
         [HttpGet]
-        public async Task<List<BaseIoTSignal>> Get() =>
+        public async Task<List<BaseIoTSignalModel>> Get() =>
             await _alarmsService.GetAsync();
     }
 }

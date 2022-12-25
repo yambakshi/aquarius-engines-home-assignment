@@ -7,7 +7,7 @@ namespace IoTMonitorServer.Services
     public class AlarmsService
     {
 
-        private readonly IMongoCollection<BaseIoTSignal> _alarmsCollection;
+        private readonly IMongoCollection<BaseIoTSignalModel> _alarmsCollection;
 
         public AlarmsService(IOptions<IoTMonitorDatabaseSettings> ioTMonitorDatabaseSettings)
         {
@@ -17,14 +17,14 @@ namespace IoTMonitorServer.Services
             var mongoDatabase = mongoClient.GetDatabase(
                 ioTMonitorDatabaseSettings.Value.DatabaseName);
 
-            _alarmsCollection = mongoDatabase.GetCollection<BaseIoTSignal>(
+            _alarmsCollection = mongoDatabase.GetCollection<BaseIoTSignalModel>(
                 ioTMonitorDatabaseSettings.Value.AlarmsCollectionName);
         }
 
-        public async Task<List<BaseIoTSignal>> GetAsync() =>
+        public async Task<List<BaseIoTSignalModel>> GetAsync() =>
             await _alarmsCollection.Find(_ => true).ToListAsync();
 
-        public async Task CreateManyAsync(BaseIoTSignal[] newSignals) =>
+        public async Task CreateManyAsync(BaseIoTSignalModel[] newSignals) =>
             await _alarmsCollection.InsertManyAsync(newSignals);
     }
 }
