@@ -102,6 +102,7 @@ export class HomePageComponent {
     ngAfterViewChecked(): void {
         if (!isPlatformBrowser(this.platformId) || !this.afterViewCheckedEnabled) return;
         Object.values(IoTSignalType).forEach(type => this.refreshSvg(type));
+        this.afterViewCheckedEnabled = false;
     }
 
     private createSvg(iotSignalType: IoTSignalType): void {
