@@ -23,12 +23,29 @@
    ```
 
 ### MongoDB
-1. Download and install `MongoDB` **4.4.3** (or the closest version) from the [MongoDB Community Server Download](https://www.mongodb.com/try/download/community) page.
+1. Download and install `MongoDB` **4.4.3** (or the closest version) from the [MongoDB Community Server Download](https://www.mongodb.com/try/download/community) page
+2. Once installed run the `MongoDB` shell
+   ```
+   mongo
+   ```
+3. Create the `iot-monitor` DB
+   ```
+   use iot-monitor
+   ```
+4. Create the `monitor` and `alarms` collections
+   ```
+   db.createCollection("monitor")
+   db.createCollection("alarms")
+   ```
+5. Create the `iot-monitor` admin user
+   ```
+   db.createUser({ user: "iot-monitor-admin", pwd: "1234", roles: [{ role: "dbAdmin", db: "iot-monitor" }]})
+   ```
 
 ### Server
-1. Run `Visual Studio`, click `Open a project or solution` and navigate to the `IoTMonitorServer` folder.
+1. Run `Visual Studio`, click `Open a project or solution` and navigate to the `IoTMonitorServer` folder
 2. Double click `IoTMonitorServer.sln`
-3. Once the solution is done loading click `Project` from the top menu and and then `Manage NuGet Packages...`
+3. Once the solution is done loading click `Project` from the top menu and then `Manage NuGet Packages...`
 4. Click the `Browse` tab and search for `MongoDB.Driver` version **12.18.0**
 5. Install `MongoDB Driver`
 
