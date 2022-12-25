@@ -38,9 +38,3 @@ The `IoT Device` transmits 2 signals to the server every 2 milliseconds (1000 si
 ### Client
 - **Alarms Page** - Goes over the 1000 new signals, filters the signals that are flagged with `out_of_bounds` and adds them to the table.
 - **Monitor Page** - Takes most recent 100 signals from the received 1000 signals and updates the graphs.
-
-# System Design - Pros & Cons
-## Cons
-### Performence
-- The server will perform 2 Inserts every 2-5 seconds of stream (1 into `IoT Signals` collection and 1 into `Alarms` collection)
-- The server will perform 1 fetch and 1 delete on `IoT Signals` collection every 2 seconds (on a background thread).
