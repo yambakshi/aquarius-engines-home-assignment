@@ -12,10 +12,15 @@
 
 ### Client
 - [Angular CLI](https://github.com/angular/angular-cli) **12.2.10**
-- [Angular Universal SSR](https://angular.io/guide/universal) **12.1.3**
-- Material UI **12.2.13**
 
 ## Installation
+### Global
+1. Install `NodeJS` **12.14.1**
+2. Install `Typescript` **4.3.5** globally
+   ```
+   npm install -g typescript@4.3.5
+   ```
+
 ### IoT Device
 1. `cd` into `IoTDevice` folder and install `npm` packages
    ```
@@ -55,12 +60,7 @@
    npm install -g @angular/cli@12.2.10
    ```
 
-2. Install `Typescript` **4.3.5** globally
-   ```
-   npm install -g typescript@4.3.5
-   ```
-
-3. `cd` into `client` folder and install `npm` packages
+2. `cd` into `client` folder and install `npm` packages
    ```
    npm i
    ```
@@ -80,7 +80,7 @@
    ```
 
 3. When the build finishes open any browser and navigate to [http://localhost:4200](http://localhost:4200)
-4. There you'll see the `IoT Monitor` page
+4. You should see the `IoT Monitor` home page
 
 ### IoT Device
 1. Open `IoTDevice` folder with `VSCode`
@@ -90,6 +90,8 @@
 
 2. In `VSCode` press `F5` and the `IoT Device` will start generating and trasmitting `IoT` signals to the server (`tail` the log file using `tail -f log/iot-device.log`)
 
+## Monitor IoT Signals
+You'll be able to monitor the received `IoT` signals on [http://localhost:4200](http://localhost:4200) using 2 pages:
 ### Monitor Page
 - In the `Monitor` page you'll see the graphs refresh with the most recent 100 readings every second
 - Anomalies will appear as **red dots** in the graphs (might take a few seconds to actually see anomalies because their random)

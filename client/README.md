@@ -3,8 +3,9 @@
 ## Technologies
 
 This project was generated with:
-- [Angular CLI](https://github.com/angular/angular-cli) 12.2.10
-- [Angular Universal SSR](https://angular.io/guide/universal) 12.1.3
+- [Angular CLI](https://github.com/angular/angular-cli) **12.2.10**
+- [Angular Universal SSR](https://angular.io/guide/universal) **12.1.3**
+- Material UI **12.2.13**
 - Typescript 4.3.5
 - NodeJS 12.14.1
 - NPM 6.13.4
