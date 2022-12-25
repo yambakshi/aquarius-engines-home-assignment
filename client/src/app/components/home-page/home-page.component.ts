@@ -68,7 +68,7 @@ export class HomePageComponent {
             });
 
         const margin = { top: 10, right: 10, bottom: 35, left: 20 };
-        const width = 750 - margin.left - margin.right;
+        const width = 700 - margin.left - margin.right;
         const height = 400 - margin.top - margin.bottom;
         this.graphConfig = {
             margin, width, height,
