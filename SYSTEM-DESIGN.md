@@ -15,9 +15,6 @@
 ## Initial Fetch
 ### Server
 - **GET /api/alarms** - Fetches all documents from `Alarms` collection (with pagination functionality)
-   > *Optimization Suggestion*
-Get all documents from DB just to know the total amount but send only 100 most recent alarms to the client (which are 10 pages in the table).
-Then fetch the next 10 signals every time the user goes to the next page using pagination.
 - **GET /api/iotsignals?limit=100** - Fetches 100 most recent docuemnts from `IoT Signals` Collection
 
 ### Client
