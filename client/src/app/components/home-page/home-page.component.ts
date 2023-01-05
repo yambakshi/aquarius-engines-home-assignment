@@ -95,13 +95,15 @@ export class HomePageComponent {
         if (!isPlatformBrowser(this.platformId)) return;
         Object.values(IoTSignalType).forEach(type => {
             this.createSvg(type);
-            this.refreshSvg(type);
         });
     }
 
     ngAfterViewChecked(): void {
         if (!isPlatformBrowser(this.platformId) || !this.afterViewCheckedEnabled) return;
-        Object.values(IoTSignalType).forEach(type => this.refreshSvg(type));
+        Object.values(IoTSignalType).forEach(type => {
+            this.refreshSvg(type)
+        });
+
         this.afterViewCheckedEnabled = false;
     }
 

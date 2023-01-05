@@ -15,6 +15,9 @@
 ## Initial Fetch
 ### Server
 - **GET /api/alarms** - Fetches all documents from `Alarms` collection (with pagination functionality)
+   > *Optimization Suggestion*
+Get all documents from DB just to know the total amount but send only 100 most recent alarms to the client (which are 10 pages in the table).
+Then fetch the next 10 signals every time the user goes to the next page using pagination.
 - **GET /api/iotsignals?limit=100** - Fetches 100 most recent docuemnts from `IoT Signals` Collection
 
 ### Client
@@ -35,3 +38,9 @@ The `IoT Device` transmits 2 signals to the server every 2 milliseconds (1000 si
 ### Client
 - **Alarms Page** - Receives a range of alarms (using pagination).
 - **Monitor Page** - Receives most recent 100 signals from the received 1000 signals and updates the graphs.
+
+# System Design - Pros & Cons
+## Cons
+### Performence
+- The server will perform 2 Inserts every 2-5 seconds of stream (1 into `IoT Signals` collection and 1 into `Alarms` collection)
+- The server will perform 1 fetch and 1 delete on `IoT Signals` collection every 2 seconds (on a background thread).
